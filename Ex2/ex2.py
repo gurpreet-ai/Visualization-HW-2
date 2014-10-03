@@ -2,6 +2,8 @@ from matplotlib import pyplot as plt
 from scipy.io import loadmat
 import matplotlib as mpl
 import numpy as np
+from scipy.stats.stats import pearsonr
+
 
 def main():
 	data = loadmat('AQUA.2013089.2055.mat')
@@ -60,23 +62,26 @@ def main():
 	ax.xaxis.set_tick_params('major', length=2, labelsize=10)
 	ax.yaxis.set_tick_params('major', length=2, labelsize=10)
 
+	a, b, c = np.polyfit(b_1, b_6, 2)
 	z = np.polyfit(b_1, b_6, 2)
 	p = np.poly1d(z)
 	slope, y_inter = np.polyder(p)
 
 	#plot data and customize look of plot
 	ax.plot(b_1, b_6, marker='.', color='k', linestyle='',
-	        markersize=4, clip_on=False, alpha=0.9)
+	        markersize=4, clip_on=False, alpha=0.7)
 
-	ax.plot(b_1, p(b_1), marker='.', color='yellow', linestyle='-',
+	ax.plot(b_1, p(b_1), marker='*', color='red', linestyle='-',
         markersize=4, clip_on=False, label='Linear regression line')
 
 	#set axis limits 
 	#ax.set_xlim((0,1.2))
 	#ax.set_ylim((0,0.7))
+	x = pearsonr(b_1, b_6)
 	ax.set_title('A comparison of Band 1 and Band 6 Reflectance.', fontsize=15, family='sans-serif')
-	ax.text(0.55, 0.55, r'$Slope = %s$' % round(slope, 4), fontsize=15, horizontalalignment='right')
-
+	ax.text(0.6, 0.54, r'$Slope = %s$' % round(slope, 4), fontsize=15, horizontalalignment='right')
+	ax.text(0.6, 0.57, r'$Correlation Coefficient = %s$' % round(x[0], 4), fontsize=15, horizontalalignment='right')
+	
 	ax.autoscale_view()
 
 	#set labels
@@ -106,14 +111,16 @@ def main():
 	z1 = np.polyfit(b_7, b_6, 2)
 	p1 = np.poly1d(z1)
 	slope1, y_inter1 = np.polyder(p1)
-	
-	bx.text(0.2, 0.57, r'$Slope = %s$' % round(slope1, 4), fontsize=15, horizontalalignment='right')
+	x = pearsonr(b_7, b_6)
 
+	bx.text(0.1, 0.57, r'$Correlation Coefficient = %s$' % round(x[0], 4), fontsize=15, horizontalalignment='left')
+	bx.text(0.1, 0.54, r'$Slope = %s$' % round(slope1, 4), fontsize=15, horizontalalignment='left')
+	
 	#plot data and customize look of plot
 	bx.plot(b_7, b_6, marker='.', color='k', linestyle='',
 	        markersize=4, clip_on=False, alpha=0.9)
 
-	a = bx.plot(b_7, p1(b_7), marker='.', color='yellow', linestyle='-',
+	a = bx.plot(b_7, p1(b_7), marker='*', color='red', linestyle='-',
         markersize=4, clip_on=False, label='Linear regression line')
 
 	#set axis limits 
