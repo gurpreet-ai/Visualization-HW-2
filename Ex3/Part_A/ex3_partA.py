@@ -47,7 +47,7 @@ def main():
 	ax.set_xlabel('Cities in the World')
 	ax.set_ylabel('Temperature (Farh) ')
 	ax.autoscale_view()
-l
+
 	fig.savefig('partA_fig1.png')
 
 	fig2 = plt.figure(figsize=(10,8))
