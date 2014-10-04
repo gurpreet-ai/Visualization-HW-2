@@ -97,7 +97,7 @@ def main():
 	print "\nVancouver"
 	sorted(Vancouver.keys())
 	"""
-	fig = plt.figure(figsize=(14,8))
+	fig = plt.figure(figsize=(18,12))
 	gs = mpl.gridspec.GridSpec(1,1)
 	ax = fig.add_subplot(gs[0])
 	plt.subplots_adjust(left=0.075, right=0.95, top=0.9, bottom=0.25)
@@ -125,35 +125,19 @@ def main():
 	_list = [i+.75 for i in Johannesburg.keys()]
 	rect4 = ax.bar(_list, Joh_fall, width, color='bisque', alpha=.4)
 
-	ax.set_title('Johannesburg (Temperature 1948 - 1960)', alpha=.4)
+	print Johannesburg.keys()
+	ax.set_xticks(Johannesburg.keys())
+	ax.set_xticklabels(Johannesburg.keys(), rotation=45, fontsize=9)
+	ax.set_title('Johannesburg (Temperature 1948 - 1960)')
 	ax.set_xlabel('Years')
-	ax.set_ylabel('Temperature (Farh) ')
+	ax.set_ylabel('Temperature (Farh)')
 	
 	ax.set_xlim((1948,2008))
 	ax.legend( (rect1[0], rect2[0], rect3[0], rect4[0]), ('Winter', 'Spring', 'Summer', 'Fall') )
 
 	fig.savefig('fig.png')
 
-	"""
-	{
-		'1948': {
-			fall: []
-			summer: []
-			winter: []
-			spring: []
-		}
-		'1949': {
-			fall: []
-			summer: []
-			winter: []
-			spring: []
-		}
-	}
-
-	# 80,000 = 60 years * 12 months * 4 weeks * 7 days * 4/day
-	# 1948 data = 1->60 * 12 * 4 * 7 * 4
-	# 1948 monthly = 1->12 * 4 * 7 * 4
-	"""
+	
 
 if __name__ == '__main__':
 	main()
