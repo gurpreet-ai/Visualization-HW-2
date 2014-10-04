@@ -4,18 +4,52 @@ import matplotlib as mpl
 import numpy as np
 import pandas as pd
 from pandas import DataFrame, Series
-from datetime import datetime
-import calendar
+
+def data_format(series):
+	time = series['time']
+	temp = series['temperature']
+
+	time_temp = zip(time, temp)
+	win = ['12', '01', '02']
+	spr = ['03', '04', '05']
+	sumer = ['06', '07', '08']
+	fal   = ['09', '10', '11']
+
+	year = {}
+	
+	for k, v in enumerate(range(1948, 2009)):
+		q = []
+		winter = []
+		spring = []
+		summer = []
+		fall = []
+		season = {}
+		for i, j in time_temp:
+			if i[0:4] == str(v):
+				if i[5:7] in win:
+					j[0] = k2f(j[0])
+					winter.append(j[0])
+				elif i[5:7] in spr:
+					j[0] = k2f(j[0])
+					spring.append(j[0])
+				elif i[5:7] in sumer:
+					j[0] = k2f(j[0])
+					summer.append(j[0])
+				elif i[5:7] in fal:
+					j[0] = k2f(j[0])
+					fall.append(j[0])
+
+		season['winter'] = round(np.average(winter), 2)
+		season['spring'] = round(np.average(spring), 2)
+		season['summer'] = round(np.average(summer), 2)
+		season['fall']   = round(np.average(fall), 2)
+		
+		year[v] = season
+
+	return year
 
 def k2f(t):
     return (t*9/5.0) - 459.67
-
-def read_data(city):
-	data = loadmat(city)
-	kelvin = data['temperature']
-	kelvin = [ j for i in kelvin for j in i]
-	x = [k2f(i) for i in kelvin]
-	return x, x[0:20000], x[len(x)-20000:]
 
 def set_Spines(x):
 	x.spines['top'].set_visible(False)
@@ -27,27 +61,99 @@ def set_Spines(x):
 	x.yaxis.set_ticks_position('left')
 
 def main():
+	data = loadmat('Johannesburg.mat')
+	series = Series(data)
+	Johannesburg = data_format(series)
+	print "Johannesburg"
+	sorted(Johannesburg.keys())
+	"""
+	data = loadmat('Paris.mat')
+	series = Series(data)
+	Paris = data_format(series)
+	print "\nParis"
+	sorted(Paris.keys())
 
-	joh_farh, joh_ist20, joh_lst20  	 = read_data('Johannesburg.mat')
-	paris_farh, paris_ist20, paris_lst20 = read_data('Paris.mat')
-	SP_farh, SP_ist20, SP_lst20 	   	 = read_data('SaoPaulo.mat')
-	Sing_farh, Sing_ist20, Sing_lst20 	 = read_data('Singapore.mat')
-	Syd_farh, Syd_ist20, Syd_lst20 	 	 = read_data('Sydney.mat')
-	Van_farh, Van_ist20, Van_lst20 		 = read_data('Vancouver.mat')
+	data = loadmat('SaoPaulo.mat')
+	series = Series(data)
+	SaoPaulo = data_format(series)
+	print "\nSaoPaulo"
+	sorted(SaoPaulo.keys())
 
-	frame = DataFrame(joh_farh)
+	data = loadmat('Singapore.mat')
+	series = Series(data)
+	Singapore = data_format(series)
+	print "\nSingapore"
+	sorted(Singapore.keys())
 
-	years = [str(n) for n in range(1948, 2008)]
-	months = [m for m in calendar.month_abbr[1:]]
+	data = loadmat('Sydney.mat')
+	series = Series(data)
+	Sydney = data_format(series)
+	print "\nSydney"
+	sorted(Sydney.keys())
 
-	print months
+	data = loadmat('Vancouver.mat')
+	series = Series(data)
+	Vancouver = Vancouver(series)
+	print "\nVancouver"
+	sorted(Vancouver.keys())
+	"""
+	fig = plt.figure(figsize=(14,8))
+	gs = mpl.gridspec.GridSpec(1,1)
+	ax = fig.add_subplot(gs[0])
+	plt.subplots_adjust(left=0.075, right=0.95, top=0.9, bottom=0.25)
+	set_Spines(ax)
 
-	Winter = [i for i in months if i == 'Dec' or 'Jan' or 'Feb']
-	Spring = [i for i in months if i == 'Mar' or 'Apr' or 'May']
-	Summer = [i for i in months if i == 'Jun' or 'Jul' or 'Aug']
-	Fall =   [i for i in months if i == 'Sep' or 'Oct' or 'Nov']
+	x = Johannesburg.values()
+	Joh_winter = []
+	Joh_spring = []
+	Joh_summer = []
+	Joh_fall = []
+	for i in x:
+		Joh_winter.append(i['winter'])
+		Joh_spring.append(i['spring'])
+		Joh_summer.append(i['summer'])
+		Joh_fall.append(i['fall'])
 
+	N = len(Johannesburg.keys())
+	ind = np.arange(N)
+	width = 0.25
+	rect1 = ax.bar(Johannesburg.keys(), Joh_winter, width, color='navy')
+	_list = [i+.25 for i in Johannesburg.keys()]
+	rect2 = ax.bar(_list, Joh_spring, width, color='tan', alpha=.4)
+	_list = [i+.50 for i in Johannesburg.keys()]
+	rect3 = ax.bar(_list, Joh_summer, width, color='Aqua', alpha=.4)
+	_list = [i+.75 for i in Johannesburg.keys()]
+	rect4 = ax.bar(_list, Joh_fall, width, color='bisque', alpha=.4)
+
+	ax.set_title('Johannesburg (Temperature 1948 - 1960)', alpha=.4)
+	ax.set_xlabel('Years')
+	ax.set_ylabel('Temperature (Farh) ')
 	
+	ax.set_xlim((1948,2008))
+	ax.legend( (rect1[0], rect2[0], rect3[0], rect4[0]), ('Winter', 'Spring', 'Summer', 'Fall') )
+
+	fig.savefig('fig.png')
+
+	"""
+	{
+		'1948': {
+			fall: []
+			summer: []
+			winter: []
+			spring: []
+		}
+		'1949': {
+			fall: []
+			summer: []
+			winter: []
+			spring: []
+		}
+	}
+
+	# 80,000 = 60 years * 12 months * 4 weeks * 7 days * 4/day
+	# 1948 data = 1->60 * 12 * 4 * 7 * 4
+	# 1948 monthly = 1->12 * 4 * 7 * 4
+	"""
 
 if __name__ == '__main__':
 	main()
